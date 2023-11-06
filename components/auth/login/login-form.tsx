@@ -6,6 +6,8 @@ import { useForm } from 'react-hook-form'
 import { Button } from '@/components/ui/button'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { useRouter } from 'next/navigation'
 
 const formSchema = z.object({
   email: z.string().email({
@@ -19,7 +21,9 @@ const formSchema = z.object({
 })
 
 export function LoginForm () {
-  // 1. Define your form.
+  const router = useRouter()
+  const supabase = createClientComponentClient()
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -29,14 +33,23 @@ export function LoginForm () {
   })
 
   // 2. Define a submit handler.
-  function onSubmit (values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values)
+  async function onSubmit (values: z.infer<typeof formSchema>) {
+    try {
+      const { email, password } = values
+
+      await supabase.auth.signInWithPassword({
+        email,
+        password
+      })
+
+      router.refresh()
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   return (
-    <Form {...form}>
+    <Form {...form} >
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         <FormField
           control={form.control}
