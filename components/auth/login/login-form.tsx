@@ -1,84 +1,55 @@
 'use client'
 
-import * as z from 'zod'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { useForm } from 'react-hook-form'
-import { Button } from '@/components/ui/button'
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { Label } from '@/components/ui/label'
+import { useFormState } from 'react-dom'
+import { authenticate, type AuthState } from '@/actions/auth'
+import { Button } from '@/components/ui/button'
+import { useEffect } from 'react'
+import { useToast } from '@/components/ui/use-toast'
 import { useRouter } from 'next/navigation'
 
-const formSchema = z.object({
-  email: z.string().email({
-    message: 'Por favor, ingrese un email válido'
-  }),
-  password: z.string().min(6, {
-    message: 'La contraseña debe tener al menos 6 caracteres'
-  }).max(50, {
-    message: 'La contraseña debe tener menos de 50 caracteres'
-  })
-})
-
 export function LoginForm () {
+  const { toast } = useToast()
   const router = useRouter()
-  const supabase = createClientComponentClient()
+  const initialState: AuthState = { message: null, errors: {} }
+  const [state, dispatch] = useFormState(authenticate, initialState)
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      email: '',
-      password: ''
-    }
-  })
-
-  // 2. Define a submit handler.
-  async function onSubmit (values: z.infer<typeof formSchema>) {
-    try {
-      const { email, password } = values
-
-      await supabase.auth.signInWithPassword({
-        email,
-        password
-      })
-
+  useEffect(() => {
+    if (state.message === 'success') {
+      toast({ description: 'Sesión iniciada' })
       router.refresh()
-    } catch (error) {
-      console.log(error)
     }
-  }
+  }, [state.message, router, toast])
 
   return (
-    <Form {...form} >
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-        <FormField
-          control={form.control}
-          name="email"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Correo electrónico</FormLabel>
-              <FormControl>
-                <Input {...field} autoComplete="new-password" autoFocus={true}/>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="password"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Contraseña</FormLabel>
-              <FormControl>
-                <Input {...field} type="password" autoComplete="new-password" />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <Button type="submit">Submit</Button>
-      </form>
-    </Form>
+    <form action={dispatch} className="space-y-8">
+      <div className="grid w-full max-w-sm items-center gap-1.5">
+        <Label htmlFor='email'>Correo electrónico</Label>
+        <Input type='text' id='email' name={'email'}/>
+         {JSON.stringify(state)}
+      </div>
+
+      <div className="grid w-full max-w-sm items-center gap-1.5">
+        <Label htmlFor='password'>Contraseña</Label>
+        <Input type='password' id='password' name={'password'}/>
+      </div>
+
+      <Button type='submit'>Iniciar sesión</Button>
+    </form>
   )
 }
+
+// {/*{state?.errors?.email*/}
+// {/*  ? (*/}
+// {/*    <div*/}
+// {/*        id="email-error"*/}
+// {/*        aria-live="polite"*/}
+// {/*        className="mt-2 text-sm text-red-500"*/}
+// {/*    >*/}
+// {/*      {state.errors.email.map((error: string) => (*/}
+// {/*          <p key={error}>{error}</p>*/}
+// {/*      ))}*/}
+// {/*    </div>*/}
+// {/*    )*/}
+// {/*  : null}*/}
