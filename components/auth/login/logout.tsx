@@ -1,9 +1,9 @@
 'use client'
 
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
-import { Button } from '@/components/ui/button'
 import { useRouter } from 'next/navigation'
 import { useToast } from '@/components/ui/use-toast'
+import { DropdownMenuItem } from '@/components/ui/dropdown-menu'
 
 export const Logout = () => {
   const router = useRouter()
@@ -21,5 +21,5 @@ export const Logout = () => {
     }
   }
 
-  return (<Button onClick={handleLogout}>Cerrar sesión</Button>)
+  return (<DropdownMenuItem onClick={handleLogout} className='h-full w-full cursor-pointer text-destructive' >Cerrar sesión</DropdownMenuItem>)
 }
