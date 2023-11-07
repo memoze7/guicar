@@ -41,10 +41,10 @@ export function LoginForm () {
         <InputError name='password' errors={state.errors} />
       </div>
 
-      <Button type='submit'>Iniciar sesión</Button>
+      <Button type='submit' className='w-full'>Iniciar sesión</Button>
     </form>
       {Boolean(state.message) && state.message !== 'success' && (
-      <Alert variant="destructive">
+      <Alert variant="destructive" className='mt-4'>
         <ExclamationTriangleIcon className="h-4 w-4" />
         <AlertTitle>Error</AlertTitle>
         <AlertDescription>
