@@ -8,6 +8,9 @@ import { Button } from '@/components/ui/button'
 import { useEffect } from 'react'
 import { useToast } from '@/components/ui/use-toast'
 import { useRouter } from 'next/navigation'
+import { InputError } from '@/components/ui/input-errors'
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+import { ExclamationTriangleIcon } from '@radix-ui/react-icons'
 
 export function LoginForm () {
   const { toast } = useToast()
@@ -23,33 +26,35 @@ export function LoginForm () {
   }, [state.message, router, toast])
 
   return (
+    <div>
+
     <form action={dispatch} className="space-y-8">
       <div className="grid w-full max-w-sm items-center gap-1.5">
         <Label htmlFor='email'>Correo electrónico</Label>
         <Input type='text' id='email' name={'email'}/>
-         {JSON.stringify(state)}
+        <InputError name='email' errors={state.errors} />
       </div>
 
       <div className="grid w-full max-w-sm items-center gap-1.5">
         <Label htmlFor='password'>Contraseña</Label>
         <Input type='password' id='password' name={'password'}/>
+        <InputError name='password' errors={state.errors} />
       </div>
 
       <Button type='submit'>Iniciar sesión</Button>
     </form>
+      {Boolean(state.message) && state.message !== 'success' && (
+      <Alert variant="destructive">
+        <ExclamationTriangleIcon className="h-4 w-4" />
+        <AlertTitle>Error</AlertTitle>
+        <AlertDescription>
+          { state.message === 'Invalid login credentials'
+            ? 'Las credenciales de inicio de sesión son inválidas'
+            : 'Ocurrió un error al iniciar sesión, por favor intenta de nuevo o contacta a soporte'
+          }
+        </AlertDescription>
+      </Alert>
+      )}
+    </div>
   )
 }
-
-// {/*{state?.errors?.email*/}
-// {/*  ? (*/}
-// {/*    <div*/}
-// {/*        id="email-error"*/}
-// {/*        aria-live="polite"*/}
-// {/*        className="mt-2 text-sm text-red-500"*/}
-// {/*    >*/}
-// {/*      {state.errors.email.map((error: string) => (*/}
-// {/*          <p key={error}>{error}</p>*/}
-// {/*      ))}*/}
-// {/*    </div>*/}
-// {/*    )*/}
-// {/*  : null}*/}

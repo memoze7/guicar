@@ -29,8 +29,6 @@ export async function authenticate (
   formData: FormData
 ) {
   try {
-    console.log('formData-->', formData)
-
     const validatedFields = AuthSchema.safeParse({
       email: formData.get('email'),
       password: formData.get('password')
@@ -48,10 +46,17 @@ export async function authenticate (
     const cookieStore = cookies()
     const supabase = createRouteHandlerClient({ cookies: () => cookieStore })
 
-    await supabase.auth.signInWithPassword({
+    const { error } = await supabase.auth.signInWithPassword({
       email,
       password
     })
+
+    console.log(error?.message)
+    if (error) {
+      return {
+        message: error.message
+      }
+    }
 
     return {
       message: 'success'
@@ -59,7 +64,7 @@ export async function authenticate (
   } catch (error) {
     if ((error as Error).message.includes('CredentialsSignin')) {
       return {
-        message: 'CredentialSignin'
+        message: 'error'
       }
     }
     throw error
