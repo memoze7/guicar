@@ -1,12 +1,13 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
-import { ThemeProvider } from '@/components/theme-provider'
 import { type ReactNode } from 'react'
 import createClient from '@/lib/supabase-server'
 import { Navbar } from '@/components/ui/navbar'
-import { Toaster } from '@/components/ui/toaster'
 import { Sidebar } from '@/components/ui/sidebar'
+import { ThemeProvider } from '@/components/theme-provider'
+import { Toaster } from '@/components/ui/toaster'
+import { clsx } from 'clsx'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -29,6 +30,7 @@ export default async function RootLayout ({
   return (
     <html lang="en">
     <body className={inter.className}>
+
     <ThemeProvider
       attribute="class"
       defaultTheme="dark"
@@ -36,18 +38,16 @@ export default async function RootLayout ({
       disableTransitionOnChange
     >
       {user && (<Navbar user={user}/>)}
-      { user && (
-      <div className="grid lg:grid-cols-5 2xl:grid-cols-6">
-        <Sidebar/>
+      <div className={clsx(user ? 'grid lg:grid-cols-5 2xl:grid-cols-6' : '')}>
+        {user && (<Sidebar/>)}
         <div className="col-span-3 lg:col-span-4 lg:border-l">
-          <div className="h-full px-4 py-6 lg:px-8">
+          <div className={clsx(user ? 'h-screen px-4 py-6 lg:px-8' : '')}>
             {children}
           </div>
         </div>
       </div>
-      )}
-      { children }
       <Toaster/>
+
     </ThemeProvider>
     </body>
     </html>

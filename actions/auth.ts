@@ -4,6 +4,7 @@ import { z } from 'zod'
 
 import { cookies } from 'next/headers'
 import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs'
+import { revalidatePath } from 'next/cache'
 
 const AuthSchema = z.object({
   email: z.string().email({
@@ -51,13 +52,13 @@ export async function authenticate (
       password
     })
 
-    console.log(error?.message)
     if (error) {
       return {
         message: error.message
       }
     }
 
+    revalidatePath('/', 'layout')
     return {
       message: 'success'
     }

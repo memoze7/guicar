@@ -17,7 +17,8 @@
     },
     "plugins": [
         "react",
-        "testing-library"
+        "testing-library",
+        "@tanstack/eslint-plugin-query"
     ],
     "overrides": [
         // Only uses Testing Library lint rules in test files

@@ -11,7 +11,6 @@ import Link from 'next/link'
 
 const Navbar = ({ user }: { user: User | null }) => {
   return (
-
     <div className="flex-col md:flex">
       <div className="border-b flex justify-between items-center p-3">
         <h2 className="scroll-m-20  text-3xl font-semibold tracking-tight first:mt-0">
@@ -21,15 +20,15 @@ const Navbar = ({ user }: { user: User | null }) => {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Avatar className='cursor-pointer'>
-                <AvatarImage src="https://github.com/shadcn.png"/>
-                <AvatarFallback>CN</AvatarFallback>
+                <AvatarImage/>
+                <AvatarFallback>GP</AvatarFallback>
               </Avatar>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-56">
               <DropdownMenuLabel>Mi cuenta</DropdownMenuLabel>
               <DropdownMenuSeparator/>
               <DropdownMenuGroup>
-                <Link href={`/dashboard/users/${user?.id}`}>
+                <Link href={`/settings/${user?.id}/profile`}>
                   <DropdownMenuItem className={'cursor-pointer'}>
                     <span>Perfil</span>
                   </DropdownMenuItem>
