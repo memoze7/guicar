@@ -35,7 +35,7 @@ export async function fetchDataProfile (userId: string) {
   }
 }
 
-export async function updateDataProfile ({ id, email, bio, userId }: { id: string, email: string, bio: string, userId: string }) {
+export async function updateDataProfile ({ id, bio, userId }: { id: string, email: string, bio: string, userId: string }) {
   noStore()
   const cookieStore = cookies()
   const databaseMutation = createServerActionClient<Database>({ cookies: () => cookieStore })
@@ -45,14 +45,31 @@ export async function updateDataProfile ({ id, email, bio, userId }: { id: strin
     .upsert({ id, bio, user_id: userId })
 }
 
-export async function updateDataAccount ({ id, email, bio, userId }: { id: string, email: string, bio: string, userId: string }) {
+export async function updateDataAccount ({ id, dateOfBirth, firstName, lastName, secondLastName, secondName, userId }: { id: string, dateOfBirth?: string, firstName: string, lastName: string, secondLastName?: string, secondName?: string, userId: string }) {
   noStore()
-  const cookieStore = cookies()
-  const databaseMutation = createServerActionClient<Database>({ cookies: () => cookieStore })
+  try {
+    const cookieStore = cookies()
+    const databaseMutation = createServerActionClient<Database>({ cookies: () => cookieStore })
 
-  return await databaseMutation
-    .from('account')
-    .upsert({
-      id
-    })
+    console.log('id-->', id)
+
+    return await databaseMutation
+      .from('account')
+      .upsert({
+        ...(Boolean(id) && { id }),
+        first_name: firstName,
+        last_name: lastName,
+        user_id: userId,
+        second_name: secondName,
+        second_last_name: secondLastName,
+        date_of_birth: dateOfBirth
+      })
+  } catch (error) {
+    console.log(error)
+    return {
+      error: {
+        message: 'Error en server al actualizar la cuenta. Por favor, contacte al administrador.'
+      }
+    }
+  }
 }

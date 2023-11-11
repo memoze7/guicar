@@ -11,6 +11,7 @@ import { useFormState } from 'react-dom'
 import { useToast } from '@/components/ui/use-toast'
 import { useEffect, useState } from 'react'
 import { InputError } from '@/components/ui/input-errors'
+import { parse } from 'date-fns'
 
 export default function AccountForm ({
   account
@@ -18,44 +19,43 @@ export default function AccountForm ({
   const { toast } = useToast()
   const initialState: SettingState = { message: null, errors: {} }
   const [state, dispatch] = useFormState(updateAccount, initialState)
-  const [date, setDate] = useState<Date | undefined>(account.date_of_birth ?? new Date())
+  const [date, setDate] = useState<Date | undefined>(account.date_of_birth ? parse(account.date_of_birth.toString(), 'yyyy-MM-dd', new Date()) : undefined)
 
   useEffect(() => {
     if (state.message === 'success') toast({ description: 'Perfil actualizado correctamente.' })
-    if (state.message === 'error') {
-      toast({ description: state.message })
-    }
+    if (state.message === 'error') toast({ description: state.message })
   }, [state, toast])
 
   return (
     <form action={dispatch}>
-      <input type='hidden' readOnly name='id' defaultValue={account.id ?? ''}/>
+      <input type='hidden' readOnly name='id' defaultValue={account.id}/>
       <input type='hidden' readOnly name='userId' defaultValue={account.user_id}/>
       <input type='hidden' readOnly name='email' defaultValue={account.email}/>
+      <input readOnly name='dateOfBirth' value={date?.toISOString() } type='hidden' />
       <div className='gap-1.5 grid grid-cols-2'>
         <div>
           <Label htmlFor='Nombre'>Nombre</Label>
           <Input type='text' className='my-2' id='email'
-                 name={'first_name'}/>
-          <InputError name={'first_name'} errors={state.errors}/>
+                 name={'firstName'} defaultValue={account.first_name ?? ''}/>
+          <InputError name={'firstName'} errors={state.errors}/>
         </div>
         <div>
           <Label htmlFor='Apellido'>Segundo nombre</Label>
           <Input type='text' className='my-2' id='email'
-                 name={'second_name'}/>
-          <InputError name={'second_name'} errors={state.errors}/>
+                 name={'secondName'} defaultValue={account.second_name ?? ''}/>
+          <InputError name={'secondName'} errors={state.errors}/>
         </div>
         <div>
           <Label htmlFor='Apellido'>Apellido</Label>
           <Input type='text' className='my-2' id='email'
-                 name={'last_name'}/>
-          <InputError name={'last_name'} errors={state.errors}/>
+                 name={'lastName'} defaultValue={account.last_name ?? ''}/>
+          <InputError name={'lastName'} errors={state.errors}/>
         </div>
         <div>
           <Label htmlFor='Apellido'>Segundo apellido</Label>
           <Input type='text' className='my-2' id='email'
-                 name={'second_last_name'}/>
-          <InputError name={'second_last_name'} errors={state.errors}/>
+                 name={'secondLastName'} defaultValue={account.second_last_name ?? ''}/>
+          <InputError name={'secondLastName'} errors={state.errors}/>
         </div>
       </div>
       <InputDescription>
@@ -66,8 +66,7 @@ export default function AccountForm ({
         <div className='flex flex-col'>
           <Label htmlFor='date_of_birth' className='mb-4'>Fecha de nacimiento</Label>
           <CalendarSetting date={date} setDate={setDate} />
-          <input readOnly name='date_of_birth' value={date?.toISOString() } />
-          <InputError name={'date_of_birth'} errors={state.errors} />
+          <InputError name={'dateOfBirth'} errors={state.errors} />
         </div>
       </div>
 

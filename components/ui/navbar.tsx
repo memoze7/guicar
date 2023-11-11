@@ -8,8 +8,14 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
 import Link from 'next/link'
+import { fetchDataAccount } from '@/data/setting'
+import { getInitials } from '@/lib/utils'
 
-const Navbar = ({ user }: { user: User | null }) => {
+const Navbar = async ({ user }: { user: User }) => {
+  const [account] = await Promise.all([
+    fetchDataAccount(user?.id)
+  ])
+
   return (
     <div className="flex-col md:flex">
       <div className="border-b flex justify-between items-center p-3">
@@ -21,7 +27,7 @@ const Navbar = ({ user }: { user: User | null }) => {
             <DropdownMenuTrigger asChild>
               <Avatar className='cursor-pointer'>
                 <AvatarImage/>
-                <AvatarFallback>GP</AvatarFallback>
+                <AvatarFallback>{getInitials(account.first_name, account.last_name)}</AvatarFallback>
               </Avatar>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-56">

@@ -5,7 +5,8 @@ export function cn (...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-export function getInitials (name: string, lastname: string) {
+export function getInitials (name?: string, lastname?: string) {
+  if (!name || !lastname) return ''
   return `${name[0]}${lastname[0]}`
 }
 

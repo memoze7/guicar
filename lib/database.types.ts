@@ -18,6 +18,50 @@ export interface Database {
           last_name: string
           second_last_name: string | null
           second_name: string | null
+          update_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          date_of_birth?: string | null
+          first_name: string
+          id?: string
+          last_name: string
+          second_last_name?: string | null
+          second_name?: string | null
+          update_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          date_of_birth?: string | null
+          first_name?: string
+          id?: string
+          last_name?: string
+          second_last_name?: string | null
+          second_name?: string | null
+          update_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'account_user_id_fkey'
+            columns: ['user_id']
+            isOneToOne: false
+            referencedRelation: 'users'
+            referencedColumns: ['id']
+          }
+        ]
+      }
+      account_guide: {
+        Row: {
+          created_at: string
+          date_of_birth: string | null
+          first_name: string
+          id: string
+          last_name: string
+          second_last_name: string | null
+          second_name: string | null
           updated_at: string
           user_id: string
         }
@@ -45,7 +89,7 @@ export interface Database {
         }
         Relationships: [
           {
-            foreignKeyName: 'account_user_id_fkey'
+            foreignKeyName: 'account_guide_user_id_fkey'
             columns: ['user_id']
             isOneToOne: false
             referencedRelation: 'users'
